@@ -35,5 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
-
-docker-compose.yml
+*.env
+mysql_data/
