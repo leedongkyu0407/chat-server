@@ -1,0 +1,23 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+  jpa:
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+    database-platform: ${DB.DIALECT}
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+#        physical_naming_strategy: ${DB.NAMING_STRATEGY}
+
+logging:
+  level:
+    com.project: ${LOG_LEVEL:DEBUG}
