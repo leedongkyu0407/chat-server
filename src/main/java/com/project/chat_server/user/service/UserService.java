@@ -1,5 +1,7 @@
 package com.project.chat_server.user.service;
 
+import com.project.chat_server.common.error.code.ErrorCode;
+import com.project.chat_server.common.error.exception.BusinessException;
 import com.project.chat_server.user.domain.User;
 import com.project.chat_server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ public class UserService {
     @Transactional
     public User createUser(String username, String password) {
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         User user = User.builder()
@@ -29,12 +31,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
     }
 }

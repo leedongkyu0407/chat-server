@@ -2,6 +2,8 @@ package com.project.chat_server.chatroom.service;
 
 import com.project.chat_server.chatroom.domain.ChatRoom;
 import com.project.chat_server.chatroom.repository.ChatRoomRepository;
+import com.project.chat_server.common.error.code.ErrorCode;
+import com.project.chat_server.common.error.exception.BusinessException;
 import com.project.chat_server.user.domain.User;
 import com.project.chat_server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,10 @@ public class ChatRoomService {
 
     private ChatRoom createChatRoom(Long userId1,  Long userId2) {
         User user1 =  userRepository.findById(userId1)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         User user2 = userRepository.findById(userId2)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         return chatRoomRepository.save(ChatRoom.builder()
                 .user1(user1)
@@ -39,7 +41,7 @@ public class ChatRoomService {
     @Transactional(readOnly = true)
     public ChatRoom getChatRoom(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHATROOM_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)

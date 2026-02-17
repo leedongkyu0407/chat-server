@@ -2,6 +2,8 @@ package com.project.chat_server.message.service;
 
 import com.project.chat_server.chatroom.domain.ChatRoom;
 import com.project.chat_server.chatroom.repository.ChatRoomRepository;
+import com.project.chat_server.common.error.code.ErrorCode;
+import com.project.chat_server.common.error.exception.BusinessException;
 import com.project.chat_server.message.domain.Message;
 import com.project.chat_server.message.repository.MessageRepository;
 import com.project.chat_server.user.domain.User;
@@ -23,10 +25,10 @@ public class MessageService {
     @Transactional
     public Message sendMessage(Long chatRoomId, Long senderId, String content) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHATROOM_NOT_FOUND));
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Message message = Message.builder()
                 .chatRoom(chatRoom)
