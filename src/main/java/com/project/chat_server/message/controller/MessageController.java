@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chatrooms/{chatroomId}/messages")
+@RequestMapping("/chatrooms/{chatRoomId}/messages")
 public class MessageController {
 
     private final MessageService messageService;
