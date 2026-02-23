@@ -25,20 +25,27 @@ public class TestDataController {
     private final MessageRepository messageRepository;
 
     @PostMapping("/users")
-    public ResponseEntity<String> generateUsers(@RequestParam(defaultValue = "1000") int count) {
-        log.info("사용자 {}명 생성 시작", count);
+    public ResponseEntity<String> generateUsers(@RequestParam(defaultValue = "100000") int count) {
+        log.debug("사용자 {}명 생성 시작", count);
 
-        List<User> users = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
-            User user = User.builder()
-                    .username("user" + i)
-                    .password("password" + i)
-                    .build();
-            users.add(user);
+        int batchSize = 5000;
+        for (int batch = 0; batch < count / batchSize; batch++) {
+            List<User> users = new ArrayList<>();
+            for (int i = 1; i <= batchSize; i++) {
+                int userId = batch * batchSize + i;
+                users.add(User.builder()
+                        .username("user" + userId)
+                        .password("password" + userId)
+                        .build());
+            }
+            userRepository.saveAll(users);
+
+            if ((batch + 1) % 4 == 0) {  // 2만 명마다 로그
+                log.debug("사용자 생성 진행: {}/{}", (batch + 1) * batchSize, count);
+            }
         }
-        userRepository.saveAll(users);
 
-        log.info("사용자 {}명 생성 완료", count);
+        log.debug("사용자 {}명 생성 완료", count);
         return ResponseEntity.ok("사용자 " + count + "명 생성 완료");
     }
 
@@ -106,25 +113,37 @@ public class TestDataController {
 
     @PostMapping("/all")
     public ResponseEntity<String> generateAll(
-            @RequestParam(defaultValue = "1000") int userCount,
-            @RequestParam(defaultValue = "500") int chatRoomCount,
-            @RequestParam(defaultValue = "100") int messagesPerRoom) {
+            @RequestParam(defaultValue = "100000") int userCount,      // 1000 → 100000
+            @RequestParam(defaultValue = "50000") int chatRoomCount,   // 500 → 50000
+            @RequestParam(defaultValue = "100") int messagesPerRoom) { // 100 유지
 
-        log.info("전체 테스트 데이터 생성 시작");
+        log.debug("=== 테스트 데이터 생성 시작 ===");
+        long startTime = System.currentTimeMillis();
 
-        generateUsers(userCount);
-        generateChatRooms(chatRoomCount);
-        generateMessages(messagesPerRoom);
+        try {
+            generateUsers(userCount);
+            generateChatRooms(chatRoomCount);
+            generateMessages(messagesPerRoom);
 
-        int totalMessages = chatRoomCount * messagesPerRoom;
+            long duration = (System.currentTimeMillis() - startTime) / 1000;
+            int totalMessages = chatRoomCount * messagesPerRoom;
 
-        String result = String.format(
-                "테스트 데이터 생성 완료\n- 사용자: %d명\n- 채팅방: %d개\n- 메시지: %d개",
-                userCount, chatRoomCount, totalMessages
-        );
+            String result = String.format(
+                    "테스트 데이터 생성 완료 (소요 시간: %d초)\n" +
+                            "- 사용자: %,d명\n" +
+                            "- 채팅방: %,d개\n" +
+                            "- 메시지: %,d개",
+                    duration, userCount, chatRoomCount, totalMessages
+            );
 
-        log.info(result);
-        return ResponseEntity.ok(result);
+            log.debug(result);
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("테스트 데이터 생성 실패", e);
+            return ResponseEntity.internalServerError()
+                    .body("생성 실패: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/all")
