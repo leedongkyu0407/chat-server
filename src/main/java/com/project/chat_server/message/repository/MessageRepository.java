@@ -9,7 +9,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    Page<Message> findByChatRoomIdOrderByCreatedAtDesc(Long chatRoomId, Pageable pageable);
+//    Page<Message> findByChatRoomIdOrderByCreatedAtDesc(Long chatRoomId, Pageable pageable);
+
+    // N+1 해결: fetch join 추가
+    @Query("""
+            SELECT m FROM Message m
+            JOIN FETCH m.sender
+            JOIN FETCH m.chatRoom
+            WHERE m.chatRoom.id = :chatRoomId
+            ORDER BY m.createdAt DESC
+            """)
+    Page<Message> findByChatRoomIdOrderByCreatedAtDesc(
+            @Param("chatRoomId") Long chatRoomId,
+            Pageable pageable);
 
     @Query("""
             SELECT COUNT(m) FROM Message m 
