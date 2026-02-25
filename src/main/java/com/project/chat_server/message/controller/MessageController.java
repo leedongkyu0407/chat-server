@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,14 @@ public class MessageController {
             @PathVariable Long chatRoomId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(messageService.getMessages(chatRoomId, pageable)
+                .map(MessageResponse::from));
+    }
+
+    @GetMapping("/slice")
+    public ResponseEntity<Slice<MessageResponse>> getMessagesSlice(
+            @PathVariable Long chatRoomId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(messageService.getMessagesSlice(chatRoomId, pageable)
                 .map(MessageResponse::from));
     }
 

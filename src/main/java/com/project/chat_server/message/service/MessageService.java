@@ -11,6 +11,7 @@ import com.project.chat_server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,11 @@ public class MessageService {
     @Transactional(readOnly = true)
     public Page<Message> getMessages(Long chatRoomId, Pageable pageable) {
         return messageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<Message> getMessagesSlice(Long chatRoomId, Pageable pageable) {
+        return messageRepository.findByChatRoomIdOrderByCreatedAtDescSlice(chatRoomId, pageable);
     }
 
     @Transactional(readOnly = true)
