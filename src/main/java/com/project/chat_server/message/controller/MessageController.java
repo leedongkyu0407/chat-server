@@ -5,13 +5,12 @@ import com.project.chat_server.message.dto.MessageSendRequest;
 import com.project.chat_server.message.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,19 +28,19 @@ public class MessageController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MessageResponse>> getMessages(
+    public ResponseEntity<List<MessageResponse>> getMessages(
             @PathVariable Long chatRoomId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(messageService.getMessages(chatRoomId, pageable)
-                .map(MessageResponse::from));
+        return ResponseEntity.ok(messageService.getMessages(chatRoomId, pageable));
     }
 
     @GetMapping("/slice")
-    public ResponseEntity<Slice<MessageResponse>> getMessagesSlice(
+    public ResponseEntity<List<MessageResponse>> getMessagesSlice(
             @PathVariable Long chatRoomId,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(messageService.getMessagesSlice(chatRoomId, pageable)
-                .map(MessageResponse::from));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(messageService.getMessagesSlice(chatRoomId, pageable));
     }
 
     @GetMapping("/unread")
