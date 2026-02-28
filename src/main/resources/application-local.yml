@@ -20,6 +20,12 @@ spring:
     hikari:
       maximum-pool-size: 20
 
+  data:
+    redis:
+      host: ${REDIS.HOST}
+      port: ${REDIS.PORT}
+      timeout: 3000ms
+
   jpa:
     hibernate:
       ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
