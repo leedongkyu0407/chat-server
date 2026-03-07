@@ -30,7 +30,7 @@ public class MessageController {
     @GetMapping
     public ResponseEntity<List<MessageResponse>> getMessages(
             @PathVariable Long chatRoomId,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(messageService.getMessages(chatRoomId, pageable));
     }
 

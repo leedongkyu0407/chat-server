@@ -57,7 +57,7 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public List<MessageResponse> getMessages(Long chatRoomId, Pageable pageable) {
-        return messageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, pageable)
+        return messageRepository.findByChatRoomId(chatRoomId, pageable)
                 .getContent().stream()
                 .map(MessageResponse::from)
                 .toList();
@@ -80,7 +80,7 @@ public class MessageService {
         }
 
         List<MessageResponse> result = messageRepository
-                .findByChatRoomIdOrderByCreatedAtDescSlice(chatRoomId, pageable)
+                .findByChatRoomIdSlice(chatRoomId, pageable)
                 .getContent().stream()
                 .map(MessageResponse::from)
                 .toList();

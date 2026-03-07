@@ -20,7 +20,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             WHERE m.chatRoom.id = :chatRoomId
             ORDER BY m.createdAt DESC
             """)
-    Page<Message> findByChatRoomIdOrderByCreatedAtDesc(
+    Page<Message> findByChatRoomId(
             @Param("chatRoomId") Long chatRoomId,
             Pageable pageable);
 
@@ -31,7 +31,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         WHERE m.chatRoom.id = :chatRoomId
         ORDER BY m.createdAt DESC
         """)
-    Slice<Message> findByChatRoomIdOrderByCreatedAtDescSlice(
+    Slice<Message> findByChatRoomIdSlice(
             @Param("chatRoomId") Long chatRoomId,
             Pageable pageable);
 
