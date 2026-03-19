@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+  config:
+    import:
+      - application-secrets.properties
+
+  datasource:
+    url: ${DB.URL}
+    username: ${DB.USERNAME}
+    password: ${DB.PASSWORD}
+    driver-class-name: ${DB.DRIVER}
+    hikari:
+      maximum-pool-size: 20
+
+  data:
+    redis:
+      host: ${REDIS.HOST}
+      port: ${REDIS.PORT}
+      timeout: 3000ms
+
+  jpa:
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:validate}
+    database-platform: ${DB.DIALECT}
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+#        physical_naming_strategy: ${DB.NAMING_STRATEGY}
+
+logging:
+  level:
+    com.project: ${LOG_LEVEL:INFO}
