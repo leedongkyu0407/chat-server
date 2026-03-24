@@ -67,11 +67,14 @@
 </head>
 <body>
 <div class="container">
-    <h1>WebSocket Chat Test (Pure WebSocket)</h1>
+    <h1>WebSocket Chat Test</h1>
 
     <div id="status" class="status disconnected">연결 안됨</div>
 
     <div>
+        <label>Server Port: </label>
+        <input type="number" id="serverPort" placeholder="8080" value="8080">
+
         <label>User ID: </label>
         <input type="number" id="userId" placeholder="1" value="1">
 
@@ -98,24 +101,21 @@
     function connect() {
         currentUserId = document.getElementById('userId').value;
         currentChatRoomId = document.getElementById('chatRoomId').value;
+        const port = document.getElementById('serverPort').value;
 
-        // 순수 WebSocket 연결
-        const socket = new WebSocket('ws://localhost:8080/ws');
+        const socket = new WebSocket(`ws://localhost:${port}/ws`);
         stompClient = Stomp.over(socket);
-
-        // STOMP 디버그 비활성화 (선택사항)
         stompClient.debug = null;
 
         stompClient.connect({}, function(frame) {
             console.log('Connected: ' + frame);
-            updateStatus(true);
+            updateStatus(true, port);
 
-            // 채팅방 구독
             stompClient.subscribe('/topic/chat/' + currentChatRoomId, function(message) {
                 showMessage(JSON.parse(message.body));
             });
 
-            addSystemMessage('채팅방 ' + currentChatRoomId + '번에 입장했습니다.');
+            addSystemMessage(`${port}번 서버 채팅방 ${currentChatRoomId}번에 입장했습니다.`);
         }, function(error) {
             console.error('Connection error: ' + error);
             updateStatus(false);
@@ -151,7 +151,6 @@
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
 
-        // 내가 보낸 메시지면 오른쪽 정렬
         if (message.senderId == currentUserId) {
             messageElement.classList.add('sent');
         }
@@ -177,7 +176,7 @@
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 
-    function updateStatus(connected) {
+    function updateStatus(connected, port) {
         const statusDiv = document.getElementById('status');
         const connectBtn = document.getElementById('connectBtn');
         const disconnectBtn = document.getElementById('disconnectBtn');
@@ -185,7 +184,7 @@
         const sendBtn = document.getElementById('sendBtn');
 
         if (connected) {
-            statusDiv.textContent = '연결됨 (Pure WebSocket)';
+            statusDiv.textContent = `연결됨 (서버 포트: ${port})`;
             statusDiv.className = 'status connected';
             connectBtn.disabled = true;
             disconnectBtn.disabled = false;
@@ -201,7 +200,6 @@
         }
     }
 
-    // Enter 키로 메시지 전송
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('messageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
