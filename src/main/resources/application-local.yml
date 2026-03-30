@@ -43,3 +43,5 @@ spring:
 logging:
   level:
     com.project: ${LOG_LEVEL:DEBUG}
+    org.springframework.web.socket: DEBUG
+    org.springframework.web.socket.messaging: TRACE
