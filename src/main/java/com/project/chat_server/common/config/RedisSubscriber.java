@@ -1,7 +1,6 @@
 package com.project.chat_server.common.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.chat_server.message.dto.MessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ public class RedisSubscriber implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        log.info("Received a message from channel: {}", new String(message.getBody()));
         try {
             message.getBody();
             String publishMessage = new String(message.getBody());
