@@ -51,7 +51,7 @@ public class MessageService {
                 .content(content)
                 .build();
 
-        evictCache(chatRoomId);
+//        evictCache(chatRoomId);
         return  messageRepository.save(message);
     }
 
