@@ -28,8 +28,8 @@ public class TestDataController {
     public ResponseEntity<String> generateUsers(@RequestParam(defaultValue = "100000") int count) {
         log.debug("사용자 {}명 생성 시작", count);
 
-        int batchSize = 5000;
-        for (int batch = 0; batch < count / batchSize; batch++) {
+        int batchSize = Math.min(count, 5000);
+        for (int batch = 0; batch < Math.max(1, count / batchSize); batch++) {
             List<User> users = new ArrayList<>();
             for (int i = 1; i <= batchSize; i++) {
                 int userId = batch * batchSize + i;
