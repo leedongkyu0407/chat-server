@@ -43,23 +43,16 @@ public class WebSocketMessageController {
     @MessageMapping("/chat/test/{chatRoomId}")
     public void sendMessageTest(
             @DestinationVariable Long chatRoomId,
-            MessageSendRequest request) {
+            MessageSendRequest request) throws JsonProcessingException {
+
+        log.info("채팅방 ID: {}", chatRoomId);  // ← 추가
 
         MessageResponse messageResponse = new MessageResponse(
                 0L, chatRoomId, request.senderId(),
                 "test", request.content(), false,
                 LocalDateTime.now());
 
-        // gRPC로 다른 서버에 전달 (단일 서버라 자기 자신에게)
-        chatGrpcClient.sendMessage(
-                chatRoomId,
-                messageResponse.senderId(),
-                messageResponse.senderUsername(),
-                messageResponse.content(),
-                messageResponse.createdAt().toString()
-        );
-
-        // 자기 서버 구독자에게도 전달
-        messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, messageResponse);
+        String channel = "chat:" + chatRoomId;
+        redisTemplate.convertAndSend(channel, objectMapper.writeValueAsString(messageResponse));
     }
 }
