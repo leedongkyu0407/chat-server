@@ -46,6 +46,14 @@ spring:
         order_updates: true
 #        physical_naming_strategy: ${DB.NAMING_STRATEGY}
 
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT:9090}
+  client:
+    chat-server:
+      address: 'static://${GRPC_TARGET_HOST:localhost}:${GRPC_TARGET_PORT:9090}'
+      negotiation-type: plaintext
+
 logging:
   level:
     com.project: ${LOG_LEVEL:INFO}
