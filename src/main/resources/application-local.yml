@@ -51,4 +51,3 @@ grpc:
 logging:
   level:
     com.project: ${LOG_LEVEL:DEBUG}
-    org.springframework.messaging: INFO
