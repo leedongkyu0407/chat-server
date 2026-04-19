@@ -54,19 +54,19 @@ jobs:
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
               ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
-
-      - name: Deploy to Server 2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER2_IP }}
-          username: root
-          password: ${{ secrets.SERVER2_PASSWORD }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
-            docker stop chat-server || true
-            docker rm chat-server || true
-            docker run -d \
-              --name chat-server \
-              -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
+#
+#      - name: Deploy to Server 2
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SERVER2_IP }}
+#          username: root
+#          password: ${{ secrets.SERVER2_PASSWORD }}
+#          script: |
+#            docker pull ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
+#            docker stop chat-server || true
+#            docker rm chat-server || true
+#            docker run -d \
+#              --name chat-server \
+#              -p 8080:8080 \
+#              -e SPRING_PROFILES_ACTIVE=prod \
+#              ${{ secrets.DOCKER_USERNAME }}/chat-server:latest
