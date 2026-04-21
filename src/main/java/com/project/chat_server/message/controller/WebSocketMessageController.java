@@ -27,24 +27,25 @@ public class WebSocketMessageController {
     private final ChatGrpcClient chatGrpcClient;
     private final SimpMessagingTemplate messagingTemplate;
 
-//    @MessageMapping("/chat/{chatRoomId}")
-//    public void sendMessage(
-//            @DestinationVariable Long chatRoomId,
-//            MessageSendRequest request) {
-//
-//        MessageResponse messageResponse = MessageResponse.from(
-//                messageService.sendMessage(chatRoomId, request.senderId(), request.content()));
-//
-//        chatGrpcClient.sendMessage(
-//                chatRoomId,
-//                messageResponse.senderId(),
-//                messageResponse.senderUsername(),
-//                messageResponse.content(),
-//                messageResponse.createdAt().toString()
-//        );
-//    }
-    @MessageMapping("/chat/{chatRoomId}")
-    public void sendMessage(
+    @MessageMapping("/chat/grpc/{chatRoomId}")
+    public void sendMessageGrpc(
+            @DestinationVariable Long chatRoomId,
+            MessageSendRequest request) {
+
+        MessageResponse messageResponse = MessageResponse.from(
+                messageService.sendMessage(chatRoomId, request.senderId(), request.content()));
+
+        chatGrpcClient.sendMessage(
+                chatRoomId,
+                messageResponse.senderId(),
+                messageResponse.senderUsername(),
+                messageResponse.content(),
+                messageResponse.createdAt().toString()
+        );
+    }
+
+    @MessageMapping("/chat/redis/{chatRoomId}")
+    public void sendMessageRedis(
             @DestinationVariable Long chatRoomId,
             MessageSendRequest request) throws JsonProcessingException {
 
@@ -56,8 +57,8 @@ public class WebSocketMessageController {
         redisTemplate.convertAndSend(channel, objectMapper.writeValueAsString(messageResponse));
     }
 
-    @MessageMapping("/chat/test/{chatRoomId}")
-    public void sendMessageTest(
+    @MessageMapping("/chat/grpc/test/{chatRoomId}")
+    public void sendMessageGrpcTest(
             @DestinationVariable Long chatRoomId,
             MessageSendRequest request) {
 
@@ -73,5 +74,20 @@ public class WebSocketMessageController {
                 messageResponse.content(),
                 messageResponse.createdAt().toString()
         );
+    }
+
+    @MessageMapping("/chat/redis/test/{chatRoomId}")
+    public void sendMessageRedisTest(
+            @DestinationVariable Long chatRoomId,
+            MessageSendRequest request) throws JsonProcessingException {
+
+        MessageResponse messageResponse = new MessageResponse(
+                0L, chatRoomId, request.senderId(),
+                "test", request.content(), false,
+                LocalDateTime.now());
+
+        // Redis에 메시지 발행만
+        String channel = "chat:" + chatRoomId;
+        redisTemplate.convertAndSend(channel, objectMapper.writeValueAsString(messageResponse));
     }
 }
