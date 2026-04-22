@@ -20,7 +20,7 @@ public class RedisSubscriber implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        log.info("Received a message from channel: {}", new String(message.getBody()));
+        log.debug("Received a message from channel: {}", new String(message.getBody()));
         try {
             message.getBody();
             String publishMessage = new String(message.getBody());

@@ -51,7 +51,7 @@ public class TestDataController {
 
     @PostMapping("/chatrooms")
     public ResponseEntity<String> generateChatRooms(@RequestParam(defaultValue = "500") int count) {
-        log.info("채팅방 {}개 생성 시작", count);
+        log.debug("채팅방 {}개 생성 시작", count);
 
         List<User> users = userRepository.findAll();
         if (users.size() < 2) {
@@ -76,13 +76,13 @@ public class TestDataController {
         }
         chatRoomRepository.saveAll(chatRooms);
 
-        log.info("채팅방 {}개 생성 완료", count);
+        log.debug("채팅방 {}개 생성 완료", count);
         return ResponseEntity.ok("채팅방 " + count + "개 생성 완료");
     }
 
     @PostMapping("/messages")
     public ResponseEntity<String> generateMessages(@RequestParam(defaultValue = "100") int messagesPerRoom) {
-        log.info("채팅방당 메시지 {}개 생성 시작", messagesPerRoom);
+        log.debug("채팅방당 메시지 {}개 생성 시작", messagesPerRoom);
 
         List<ChatRoom> chatRooms = chatRoomRepository.findAll();
         if (chatRooms.isEmpty()) {
@@ -107,7 +107,7 @@ public class TestDataController {
             totalMessages += messages.size();
         }
 
-        log.info("총 메시지 {}개 생성 완료", totalMessages);
+        log.debug("총 메시지 {}개 생성 완료", totalMessages);
         return ResponseEntity.ok("총 메시지 " + totalMessages + "개 생성 완료");
     }
 
@@ -148,13 +148,13 @@ public class TestDataController {
 
     @DeleteMapping("/all")
     public ResponseEntity<String> deleteAll() {
-        log.info("모든 테스트 데이터 삭제 시작");
+        log.debug("모든 테스트 데이터 삭제 시작");
 
         messageRepository.deleteAll();
         chatRoomRepository.deleteAll();
         userRepository.deleteAll();
 
-        log.info("모든 테스트 데이터 삭제 완료");
+        log.debug("모든 테스트 데이터 삭제 완료");
         return ResponseEntity.ok("모든 테스트 데이터 삭제 완료");
     }
 }

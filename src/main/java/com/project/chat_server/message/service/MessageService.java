@@ -86,10 +86,10 @@ public class MessageService {
                 .toList();
 
         String serialized = serialize(result);
-        log.info("serialized: {}", serialized);  // ← 추가
+        log.debug("serialized: {}", serialized);  // ← 추가
         if (serialized != null) {
             redisTemplate.opsForValue().set(key, serialized, CACHE_TTL);
-            log.info("Redis 저장 완료: key={}", key);  // ← 추가
+            log.debug("Redis 저장 완료: key={}", key);  // ← 추가
         }
 
         return result;
@@ -98,7 +98,7 @@ public class MessageService {
     private String serialize(Object value) {
         try {
             String json = objectMapper.writeValueAsString(value);
-            log.info("직렬화 성공: {}", json.substring(0, Math.min(100, json.length())));
+            log.debug("직렬화 성공: {}", json.substring(0, Math.min(100, json.length())));
             return json;        } catch (JsonProcessingException e) {
             log.warn("Redis 직렬화 실패, 캐시 저장 생략: {}", e.getMessage());
             return null;  // 예외 던지지 않고 null 반환
